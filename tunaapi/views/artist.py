@@ -20,6 +20,14 @@ class ArtistView(ViewSet):
         artist = Artist.objects.get(pk=pk)
         artist.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+      
+  def retrieve(self, request, pk):
+    try:
+      artist = Artist.objects.get(pk=pk)
+      serializer = ArtistSerializer(artist)
+      return Response(serializer.data)
+    except Artist.DoesNotExist as ex:
+      return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = Artist

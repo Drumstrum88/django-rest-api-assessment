@@ -49,3 +49,11 @@ class SongView(ViewSet):
         song = Song.objects.get(pk=pk)
         song.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    def retrieve(self, request, pk):
+        try:
+            song = Song.objects.get(pk=pk)
+            serializer = SongSerializer(song)
+            return Response(serializer.data)
+        except Song.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)

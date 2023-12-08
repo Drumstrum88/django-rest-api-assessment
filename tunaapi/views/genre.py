@@ -18,6 +18,14 @@ class GenreView(ViewSet):
     genre.delete()
     return Response(None, status=status.HTTP_204_NO_CONTENT)
   
+  def retrieve(self, request, pk):
+    try:
+      genre = Genre.objects.get(pk=pk)
+      serializer = GenreSerializer(genre)
+      return Response(serializer.data)
+    except Genre.DoesNotExist as ex:
+      return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+  
 class GenreSerializer(serializers.ModelSerializer):
   class Meta:
     model = Genre
