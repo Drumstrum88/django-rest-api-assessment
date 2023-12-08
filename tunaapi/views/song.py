@@ -16,8 +16,7 @@ class SongView(ViewSet):
             title = request.data.get('title')
             album = request.data.get('album')
             length = request.data.get('length')
-
-            # Check if the artist exists
+            
             try:
                 artist = Artist.objects.get(pk=artist_id)
             except Artist.DoesNotExist:
@@ -30,12 +29,11 @@ class SongView(ViewSet):
                 title=title,
                 album=album,
                 length=length,
-                artist=artist,  # Assign the Artist instance, not just the ID
+                artist=artist, 
             )
             
             serializer = SongSerializer(song)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-          
         except KeyError as e:
             return Response(
                 {'message': f'Missing key: {str(e)}'},
@@ -46,3 +44,8 @@ class SongView(ViewSet):
                 {'message': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+            
+    def destroy(self, request, pk):
+        song = Song.objects.get(pk=pk)
+        song.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
