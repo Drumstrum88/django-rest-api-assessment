@@ -25,6 +25,11 @@ class GenreView(ViewSet):
       return Response(serializer.data)
     except Genre.DoesNotExist as ex:
       return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+    
+  def list(self, request):
+    genre = Genre.objects.all()
+    serializer = GenreSerializer(genre, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
   
 class GenreSerializer(serializers.ModelSerializer):
   class Meta:

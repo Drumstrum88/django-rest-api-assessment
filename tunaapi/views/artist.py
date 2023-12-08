@@ -28,6 +28,11 @@ class ArtistView(ViewSet):
       return Response(serializer.data)
     except Artist.DoesNotExist as ex:
       return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+    
+  def list(self, request):
+    artist = Artist.objects.all()
+    serializer = ArtistSerializer(artist, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = Artist
