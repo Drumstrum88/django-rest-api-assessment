@@ -1,7 +1,10 @@
+from django.db.models import Count
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
+from rest_framework.decorators import action
+
 from tunaapi.models.genre import Genre
 
 class GenreView(ViewSet):
@@ -37,6 +40,13 @@ class GenreView(ViewSet):
     genre.save()
     
     return Response(None, status=status.HTTP_200_OK)
+  
+  @action(detail=False, methods=['get'], url_path='popular')
+  def popular(self, request):
+        popular_genres = Genre.objects.annotate(song_count=Count('song'))
+        serializer = GenreSerializer(popular_genres, many=True)
+        return Response({'genres': serializer.data}, status=status.HTTP_200_OK)
+
   
 class GenreSerializer(serializers.ModelSerializer):
   class Meta:
