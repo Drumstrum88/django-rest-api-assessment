@@ -42,8 +42,22 @@ class ArtistView(ViewSet):
     artist.save()
     
     return Response(None, status=status.HTTP_200_OK)
+  
+  @action(detail=True, methods=['get'])
+  def related(self, request, pk):
+        artist = Artist.objects.filter(pk=pk).first()
+
+        if artist:
+            artist_genre = artist.genre
+            related_artists = Artist.objects.filter(genre=artist_genre).exclude(pk=pk)
+
+            serializer = ArtistSerializer(related_artists, many=True)
+            return Response({'artists': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Artist not found'}, status=status.HTTP_404_NOT_FOUND)
+
 class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = Artist
-    fields = ['id', 'name', 'age', 'bio']
+    fields = ['id', 'name', 'age', 'bio', 'genre']
     
