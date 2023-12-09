@@ -56,6 +56,16 @@ class ArtistView(ViewSet):
         else:
             return Response({'message': 'Artist not found'}, status=status.HTTP_404_NOT_FOUND)
 
+  def list(self, request):
+    genre_id = request.GET.get('genre')
+    if genre_id:
+        artists = Artist.objects.filter(genre__id=genre_id)
+    else:
+        artists = Artist.objects.all()
+    
+    serializer = ArtistSerializer(artists, many=True)
+    return Response({'artists': serializer.data}, status=status.HTTP_200_OK)
+
 class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = Artist
