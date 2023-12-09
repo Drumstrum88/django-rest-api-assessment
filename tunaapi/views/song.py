@@ -87,3 +87,14 @@ class SongView(ViewSet):
 
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+    def list(self, request):
+        genre_id = request.GET.get('genre')
+        if genre_id:
+            songs = Song.objects.filter(genre__id=genre_id)
+        else:
+            songs = Song.objects.all()
+            
+        serializer = SongSerializer(songs, many=True)
+        return Response({'songs': serializer.data}, status=status.HTTP_200_OK)
