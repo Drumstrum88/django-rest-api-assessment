@@ -31,6 +31,13 @@ class GenreView(ViewSet):
     serializer = GenreSerializer(genre, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
   
+  def update(self, request, pk):
+    genre = Genre.objects.get(pk=pk)
+    genre.description = request.data["description"]
+    genre.save()
+    
+    return Response(None, status=status.HTTP_200_OK)
+  
 class GenreSerializer(serializers.ModelSerializer):
   class Meta:
     model = Genre

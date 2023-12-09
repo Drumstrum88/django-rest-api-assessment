@@ -62,3 +62,28 @@ class SongView(ViewSet):
         song = Song.objects.all()
         serializer = SongSerializer(song, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def update(self, request, pk):
+        try:
+            song = Song.objects.get(pk=pk)
+            
+            song.title = request.data.get("title", song.title)
+            song.album = request.data.get("album", song.album)
+            song.length = request.data.get("length", song.length)
+
+            artist_id = request.data.get("artist_id")
+            if artist_id:
+                try:
+                    artist = Artist.objects.get(pk=artist_id)
+                    song.artist = artist
+                except Artist.DoesNotExist:
+                    return Response(
+                        {'message': 'Artist does not exist'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+
+            song.save()
+            return Response(None, status=status.HTTP_200_OK)
+
+        except Song.DoesNotExist:
+            return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)

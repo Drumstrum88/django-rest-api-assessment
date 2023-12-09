@@ -33,6 +33,15 @@ class ArtistView(ViewSet):
     artist = Artist.objects.all()
     serializer = ArtistSerializer(artist, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+  
+  def update(self, request, pk):
+    artist = Artist.objects.get(pk=pk)
+    artist.name = request.data["name"]
+    artist.age = request.data["age"]
+    artist.bio = request.data["bio"]
+    artist.save()
+    
+    return Response(None, status=status.HTTP_200_OK)
 class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = Artist
